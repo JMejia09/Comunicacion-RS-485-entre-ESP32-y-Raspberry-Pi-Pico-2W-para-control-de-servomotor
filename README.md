@@ -1,85 +1,95 @@
-# 🧩 Comunicación RS-485 entre ESP32 y Raspberry Pi Pico 2W para control de servomotor
+# Comunicación RS-485 entre ESP32 y Raspberry Pi Pico 2W para control de servomotor
 
-## 🏫 Informe técnico de laboratorio
+## 1. Información general
 
-**Curso:** Comunicaciones Industriales / Electrónica Digital  
+**Asignatura:** Comunicaciones Industriales / Electrónica Digital  
 **Práctica:** Implementación de comunicación RS-485 maestro–esclavo  
-**Alumno:** [Jonny Alejandro Mejia Leon]  
-**Docente:** [ING Diego Alejandro Barragan]  
-**Institución:** [Nombre de la institución educativa]  
+**Estudiante:** [Nombre del estudiante]  
+**Docente:** [Nombre del docente]  
+**Institución:** [Nombre de la institución]  
 **Fecha:** Octubre 2025  
 
 ---
 
-## 🧠 1. Introducción
+## 2. Introducción
 
-La comunicación industrial **RS-485** es un estándar ampliamente utilizado para el intercambio de datos en entornos ruidosos o de larga distancia, gracias a su modo diferencial y capacidad multipunto.  
+La comunicación **RS-485** es un estándar industrial utilizado ampliamente para la transmisión de datos en entornos con interferencia eléctrica o largas distancias.  
+Se basa en una señal diferencial que mejora la inmunidad al ruido y permite conectar múltiples dispositivos en una misma línea de comunicación.
 
-En este proyecto se implementa una red RS-485 con un **maestro (ESP32)** y un **esclavo (Raspberry Pi Pico 2W)**, simulando los tres modos de transmisión (simplex, half dúplex y full dúplex) para controlar un **servomotor SG90**.  
-
-El objetivo es comprender los principios de comunicación diferencial, la gestión de turnos de transmisión mediante el pin de habilitación (DE/RE) del transceptor **MAX485**, y la respuesta del sistema actuador frente a los comandos enviados.
+En esta práctica se implementa una red maestro–esclavo basada en los microcontroladores **ESP32** y **Raspberry Pi Pico 2W**, conectados mediante módulos transceptores **MAX485**.  
+El sistema permite el envío de comandos desde el maestro hacia el esclavo para controlar un **servomotor SG90**, demostrando el funcionamiento de los modos **simplex**, **half dúplex** y **full dúplex**.
 
 ---
 
-## 🎯 2. Objetivos
+## 3. Objetivos
 
 ### Objetivo general
-Implementar y analizar una comunicación RS-485 entre un microcontrolador maestro y un esclavo, aplicando los modos simplex, half dúplex y full dúplex, con control práctico de un servomotor.
+Implementar una red de comunicación RS-485 entre un ESP32 y una Raspberry Pi Pico 2W para controlar un servomotor mediante transmisión serial diferencial.
 
 ### Objetivos específicos
-- Conocer la estructura y funcionamiento del estándar RS-485.  
-- Implementar la comunicación UART diferencial usando módulos MAX485.  
-- Configurar un protocolo maestro–esclavo entre **ESP32** y **Raspberry Pi Pico 2W**.  
-- Controlar un servomotor desde el maestro mediante comandos seriales.  
-- Evaluar los resultados de transmisión en cada modo de comunicación.
+- Analizar el funcionamiento del bus de comunicación RS-485.  
+- Configurar los módulos MAX485 para comunicación diferencial.  
+- Desarrollar código maestro y esclavo para los tres modos de transmisión.  
+- Verificar la comunicación y control del servomotor.  
+- Evaluar los resultados en función del tipo de transmisión.
 
 ---
 
-## 🧩 3. Marco teórico
+## 4. Marco teórico
 
-El estándar **RS-485** (TIA/EIA-485) define una interfaz eléctrica balanceada diferencial, permitiendo la comunicación a largas distancias (hasta 1200 m) y velocidades superiores a 10 Mbps.  
+### 4.1 Estándar RS-485
+El estándar **TIA/EIA-485-A** define una interfaz eléctrica balanceada, con transmisión diferencial en las líneas A y B. Permite conectar hasta 32 nodos en un mismo bus con longitudes de cable de hasta 1200 metros y velocidades de hasta 10 Mbps.
 
-A diferencia de RS-232, RS-485 permite conectar múltiples dispositivos en un mismo bus (topología multipunto), siendo común en entornos industriales como **MODBUS RTU** o **Profibus**.
+Las principales ventajas del RS-485 son:
+- Comunicación diferencial inmune al ruido.  
+- Capacidad multipunto.  
+- Transmisión half y full dúplex.  
+- Bajo consumo energético.
 
-### Características principales:
-- Comunicación diferencial (líneas A y B).  
-- Hasta 32 nodos por bus.  
-- Tolerancia a interferencias electromagnéticas.  
-- Permite modos: simplex, half dúplex, full dúplex.
+### 4.2 Módulo MAX485
+El **MAX485** es un transceptor de bajo consumo que convierte las señales UART (TTL) de los microcontroladores a señales diferenciales RS-485.  
+Dispone de los pines:
+- **DI (Data In):** Entrada de datos desde el microcontrolador.  
+- **RO (Receiver Out):** Salida de datos hacia el microcontrolador.  
+- **DE (Driver Enable):** Habilita la transmisión.  
+- **RE (Receiver Enable):** Habilita la recepción.  
 
-El chip **MAX485** convierte las señales UART (TTL) en señales RS-485 diferenciales y controla el flujo mediante los pines **DE (Driver Enable)** y **RE (Receiver Enable)**.  
-Estos pines determinan si el dispositivo está transmitiendo o recibiendo, aspecto esencial para half dúplex.
+Cuando DE y RE están en nivel alto, el dispositivo transmite; cuando están bajos, recibe.
+
+### 4.3 Modos de comunicación
+- **Simplex:** El maestro envía datos sin recibir respuesta.  
+- **Half dúplex:** Comunicación bidireccional alternada.  
+- **Full dúplex:** Comunicación bidireccional simultánea.
 
 ---
 
-## ⚙️ 4. Materiales y componentes
+## 5. Materiales y componentes
 
 | Cantidad | Componente | Función |
 |-----------|-------------|----------|
-| 1 | ESP32-WROOM-32 | Nodo maestro, envía comandos |
-| 1 | Raspberry Pi Pico 2W | Nodo esclavo, ejecuta control de servo |
-| 2 | Módulos MAX485 | Conversores UART ↔ RS-485 |
-| 1 | Servo motor SG90 (rotación continua) | Actuador |
-| 1 | Fuente de 5 V / 2 A | Alimentación común |
-| — | Protoboard y cables Dupont | Conexión de circuito |
+| 1 | ESP32-WROOM-32 | Nodo maestro |
+| 1 | Raspberry Pi Pico 2W | Nodo esclavo |
+| 2 | Módulo MAX485 | Conversor UART ↔ RS-485 |
+| 1 | Servomotor SG90 (rotación continua) | Actuador |
+| 1 | Fuente 5V / 2A | Alimentación |
+| - | Protoboard y cables Dupont | Conexión del circuito |
 
 ---
 
-## 🔌 5. Diagrama de conexión
-
-### Descripción de conexiones
+## 6. Diagrama de conexión
 
 | Conexión | ESP32 (Maestro) | MAX485 Maestro | MAX485 Esclavo | Raspberry Pi Pico 2W (Esclavo) |
 |-----------|----------------|----------------|----------------|-------------------------------|
 | UART TX/RX | TX (GPIO17) / RX (GPIO16) | DI / RO | RO / DI | GP1 (RX) / GP0 (TX) |
 | Control DE/RE | GPIO4 | DE + RE (puenteados) | DE + RE (puenteados) | GP2 |
 | Alimentación | 5V / GND | VCC / GND | VCC / GND | VBUS / GND |
-| Bus RS-485 | — | A, B (diferencial) | A, B (diferencial) | — |
-| Servo | — | — | — | GP15 (PWM) → señal servo |
+| Bus RS-485 | - | A, B (diferencial) | A, B (diferencial) | - |
+| Servo | - | - | - | GP15 (PWM) → señal servo |
 
-📸 Inserta aquí tus fotos y diagramas:
+Imágenes de referencia del montaje:
 
 ```markdown
 ![Diagrama de conexión](media/diagrama.png)
 ![Montaje físico](media/montaje.jpg)
+
 
