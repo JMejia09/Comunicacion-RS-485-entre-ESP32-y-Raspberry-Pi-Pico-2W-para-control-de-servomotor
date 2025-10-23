@@ -4,8 +4,8 @@
 
 **Curso:** Comunicaciones Industriales / Electrónica Digital  
 **Práctica:** Implementación de comunicación RS-485 maestro–esclavo  
-**Alumno:** [Tu nombre completo]  
-**Docente:** [Nombre del profesor]  
+**Alumno:** [Jonny Alejandro Mejia Leon]  
+**Docente:** [ING Diego Alejandro Barragan]  
 **Institución:** [Nombre de la institución educativa]  
 **Fecha:** Octubre 2025  
 
