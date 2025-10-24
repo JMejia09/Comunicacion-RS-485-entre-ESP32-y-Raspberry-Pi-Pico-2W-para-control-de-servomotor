@@ -2,8 +2,6 @@
 
 ## 1. Información general
 
-## 1. Información general
-
 **Asignatura:**  
 Comunicaciones Industriales  
 
