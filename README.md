@@ -9,8 +9,6 @@
 **Institución:** [Nombre de la institución]  
 **Fecha:** Octubre 2025  
 
----
-
 ## 2. Introducción
 
 La comunicación **RS-485** es un estándar industrial utilizado ampliamente para la transmisión de datos en entornos con interferencia eléctrica o largas distancias.  
@@ -18,8 +16,6 @@ Se basa en una señal diferencial que mejora la inmunidad al ruido y permite con
 
 En esta práctica se implementa una red maestro–esclavo basada en los microcontroladores **ESP32** y **Raspberry Pi Pico 2W**, conectados mediante módulos transceptores **MAX485**.  
 El sistema permite el envío de comandos desde el maestro hacia el esclavo para controlar un **servomotor SG90**, demostrando el funcionamiento de los modos **simplex**, **half dúplex** y **full dúplex**.
-
----
 
 ## 3. Objetivos
 
@@ -32,8 +28,6 @@ Implementar una red de comunicación RS-485 entre un ESP32 y una Raspberry Pi Pi
 - Desarrollar código maestro y esclavo para los tres modos de transmisión.  
 - Verificar la comunicación y control del servomotor.  
 - Evaluar los resultados en función del tipo de transmisión.
-
----
 
 ## 4. Marco teórico
 
@@ -61,8 +55,6 @@ Cuando DE y RE están en nivel alto, el dispositivo transmite; cuando están baj
 - **Half dúplex:** Comunicación bidireccional alternada.  
 - **Full dúplex:** Comunicación bidireccional simultánea.
 
----
-
 ## 5. Materiales y componentes
 
 | Cantidad | Componente | Función |
@@ -74,8 +66,6 @@ Cuando DE y RE están en nivel alto, el dispositivo transmite; cuando están baj
 | 1 | Fuente 5V / 2A | Alimentación |
 | - | Protoboard y cables Dupont | Conexión del circuito |
 
----
-
 ## 6. Diagrama de conexión
 
 | Conexión | ESP32 (Maestro) | MAX485 Maestro | MAX485 Esclavo | Raspberry Pi Pico 2W (Esclavo) |
@@ -86,11 +76,6 @@ Cuando DE y RE están en nivel alto, el dispositivo transmite; cuando están baj
 | Bus RS-485 | - | A, B (diferencial) | A, B (diferencial) | - |
 | Servo | - | - | - | GP15 (PWM) → señal servo |
 
-Imágenes de referencia del montaje:
-
-```markdown
-![Diagrama de conexión](media/diagrama.png)
-![Montaje físico](media/montaje.jpg)
 
 ## 7. Desarrollo experimental
 
@@ -206,7 +191,6 @@ while True:
 | Half dúplex | Comunicación alternada entre maestro y esclavo. | Maestro ↔ Esclavo (turnos) | `POS:120` / `OK:120` |
 | Full dúplex | Comunicación simultánea entre maestro y esclavo. | Maestro ↔ Esclavo | `POS:120` + `OK:120` |
 
----
 
 ## 9. Resultados experimentales
 
@@ -238,8 +222,6 @@ Evidencias del funcionamiento (colocar capturas o fotos):
 El análisis de los resultados muestra que el modo **half dúplex** ofrece un equilibrio adecuado entre simplicidad y funcionalidad, siendo el más empleado en sistemas industriales basados en RS-485.  
 El **simplex** resulta útil para aplicaciones unidireccionales donde no se requiere respuesta del receptor, mientras que el **full dúplex** ofrece el mayor rendimiento, aunque a costa de una mayor complejidad en el hardware.
 
----
-
 ## 11. Conclusiones
 
 1. Se implementó correctamente la comunicación RS-485 entre el ESP32 (maestro) y la Raspberry Pi Pico 2W (esclavo) utilizando módulos MAX485.  
@@ -247,8 +229,6 @@ El **simplex** resulta útil para aplicaciones unidireccionales donde no se requ
 3. El servomotor SG90 respondió adecuadamente a los comandos enviados por el maestro, confirmando la transmisión de datos confiable y la correcta interpretación de los mensajes por parte del esclavo.  
 4. El uso de los pines de control DE y RE permitió gestionar el sentido de transmisión, siendo esencial para el funcionamiento en los modos bidireccionales.  
 5. La práctica permitió comprender la relevancia del estándar RS-485 en aplicaciones industriales, destacando su robustez, bajo costo y adaptabilidad a entornos con interferencia electromagnética.
-
----
 
 ## 12. Bibliografía y recursos
 
@@ -258,8 +238,6 @@ El **simplex** resulta útil para aplicaciones unidireccionales donde no se requ
 - IEEE Standards Association, *TIA/EIA-485-A: Standard for Electrical Characteristics of Generators and Receivers for Use in Balanced Digital Multipoint Systems*.  
 - Texas Instruments, *Application Report: Understanding and Using RS-485*.  
 - Horowitz, P., & Hill, W. (2015). *The Art of Electronics* (3rd ed.). Cambridge University Press.
-
----
 
 ## 13. Estructura del repositorio
 
@@ -277,7 +255,6 @@ El **simplex** resulta útil para aplicaciones unidireccionales donde no se requ
 El análisis de los resultados muestra que el modo **half dúplex** ofrece un equilibrio adecuado entre simplicidad y funcionalidad, siendo el más empleado en sistemas industriales basados en RS-485.  
 El **simplex** resulta útil para aplicaciones unidireccionales donde no se requiere respuesta del receptor, mientras que el **full dúplex** ofrece el mayor rendimiento, aunque a costa de una mayor complejidad en el hardware.
 
----
 
 ## 11. Conclusiones
 
@@ -287,7 +264,6 @@ El **simplex** resulta útil para aplicaciones unidireccionales donde no se requ
 4. El uso de los pines de control DE y RE permitió gestionar el sentido de transmisión, siendo esencial para el funcionamiento en los modos bidireccionales.  
 5. La práctica permitió comprender la relevancia del estándar RS-485 en aplicaciones industriales, destacando su robustez, bajo costo y adaptabilidad a entornos con interferencia electromagnética.
 
----
 
 ## 12. Bibliografía y recursos
 
@@ -297,7 +273,5 @@ El **simplex** resulta útil para aplicaciones unidireccionales donde no se requ
 - IEEE Standards Association, *TIA/EIA-485-A: Standard for Electrical Characteristics of Generators and Receivers for Use in Balanced Digital Multipoint Systems*.  
 - Texas Instruments, *Application Report: Understanding and Using RS-485*.  
 - Horowitz, P., & Hill, W. (2015). *The Art of Electronics* (3rd ed.). Cambridge University Press.
-
----
 
 
