@@ -4,10 +4,15 @@
 
 **Asignatura:** Comunicaciones Industriales / Electrónica Digital  
 **Práctica:** Implementación de comunicación RS-485 maestro–esclavo  
-**Estudiante:** [Nombre del estudiante]  
-**Docente:** [Nombre del docente]  
-**Institución:** [Nombre de la institución]  
+**Estudiantes:**  
+- Jonny Alejandro Mejia  
+- Ferney Arturo Amaya  
+- David Esteban Diaz 
+
+**Docente:** ING Diego Alejandro Barragan Vargas 
+**Institución:** Universidad Santo Tomas
 **Fecha:** Octubre 2025  
+
 
 ## 2. Introducción
 
@@ -202,11 +207,14 @@ Durante las pruebas realizadas con los módulos MAX485, se obtuvieron los siguie
 4. El **servomotor SG90 de rotación continua** respondió correctamente a los comandos `POS:x`, donde el valor 90 representó el reposo, los valores mayores generaron rotación en un sentido y los menores en el sentido contrario.  
 5. Se comprobó la estabilidad del enlace y la correcta transmisión de datos en los tres modos de operación.
 
-Evidencias del funcionamiento (colocar capturas o fotos):
+## 🎥 Demostración del montaje
 
-```markdown
-![Monitor serie mostrando comunicación](media/monitor_serial.png)
-![Servo respondiendo a comandos](media/servo.gif)
+A continuación se muestra el video del funcionamiento del sistema de comunicación **RS-485 entre ESP32 y Raspberry Pi Pico 2W**, controlando el servomotor:
+
+<video src="media/montaje.mp4" controls width="600">
+  Tu navegador no soporta la reproducción de video.
+</video>
+
 
 ## 10. Análisis de resultados
 
@@ -239,39 +247,5 @@ El **simplex** resulta útil para aplicaciones unidireccionales donde no se requ
 - Texas Instruments, *Application Report: Understanding and Using RS-485*.  
 - Horowitz, P., & Hill, W. (2015). *The Art of Electronics* (3rd ed.). Cambridge University Press.
 
-## 13. Estructura del repositorio
-
-## 10. Análisis de resultados
-
-| Parámetro | Simplex | Half dúplex | Full dúplex |
-|------------|----------|--------------|--------------|
-| Dirección de transmisión | Unidireccional | Bidireccional alternada | Bidireccional simultánea |
-| Complejidad de implementación | Baja | Media | Alta |
-| Velocidad efectiva | Alta | Media | Alta |
-| Control del flujo | No requerido | Requerido | No requerido |
-| Riesgo de colisión | Nulo | Medio | Bajo |
-| Aplicaciones típicas | Sensores, PLC unidireccionales | Redes industriales RS-485 | Comunicaciones avanzadas y monitoreo |
-
-El análisis de los resultados muestra que el modo **half dúplex** ofrece un equilibrio adecuado entre simplicidad y funcionalidad, siendo el más empleado en sistemas industriales basados en RS-485.  
-El **simplex** resulta útil para aplicaciones unidireccionales donde no se requiere respuesta del receptor, mientras que el **full dúplex** ofrece el mayor rendimiento, aunque a costa de una mayor complejidad en el hardware.
-
-
-## 11. Conclusiones
-
-1. Se implementó correctamente la comunicación RS-485 entre el ESP32 (maestro) y la Raspberry Pi Pico 2W (esclavo) utilizando módulos MAX485.  
-2. Se verificaron los modos de comunicación simplex, half dúplex y full dúplex, observando las diferencias entre cada uno en cuanto a dirección de flujo, velocidad y control del canal.  
-3. El servomotor SG90 respondió adecuadamente a los comandos enviados por el maestro, confirmando la transmisión de datos confiable y la correcta interpretación de los mensajes por parte del esclavo.  
-4. El uso de los pines de control DE y RE permitió gestionar el sentido de transmisión, siendo esencial para el funcionamiento en los modos bidireccionales.  
-5. La práctica permitió comprender la relevancia del estándar RS-485 en aplicaciones industriales, destacando su robustez, bajo costo y adaptabilidad a entornos con interferencia electromagnética.
-
-
-## 12. Bibliografía y recursos
-
-- Maxim Integrated, *MAX485 Low-Power Transceiver for RS-485 Communication*, Datasheet.  
-- Espressif Systems, *ESP32 Technical Reference Manual*.  
-- Raspberry Pi Foundation, *Raspberry Pi Pico W MicroPython SDK*.  
-- IEEE Standards Association, *TIA/EIA-485-A: Standard for Electrical Characteristics of Generators and Receivers for Use in Balanced Digital Multipoint Systems*.  
-- Texas Instruments, *Application Report: Understanding and Using RS-485*.  
-- Horowitz, P., & Hill, W. (2015). *The Art of Electronics* (3rd ed.). Cambridge University Press.
 
 
