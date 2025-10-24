@@ -145,7 +145,7 @@ while True:
                 uart.write("ERROR\n")
 
     time.sleep(0.1)
-
+```cpp
 ### 7.2 Código del Esclavo (Raspberry Pi Pico 2W – Thonny / MicroPython)
 
 ```python
