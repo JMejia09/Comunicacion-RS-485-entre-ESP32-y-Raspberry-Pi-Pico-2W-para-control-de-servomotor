@@ -2,7 +2,7 @@
 
 ## 1. Información general
 
-**Asignatura:** Comunicaciones Industriales / Electrónica Digital  
+**Asignatura:** Comunicaciones Industriales 
 **Práctica:** Implementación de comunicación RS-485 maestro–esclavo  
 **Estudiantes:**  
 - Jonny Alejandro Mejia  
