@@ -221,7 +221,7 @@ Durante las pruebas realizadas con los módulos MAX485, se obtuvieron los siguie
 
 A continuación se muestra el video del funcionamiento del sistema de comunicación **RS-485 entre ESP32 y Raspberry Pi Pico 2W**, controlando el servomotor:
 
-<video src="media/montaje.mp4" controls width="600">
+<video src="media/media.mp4" controls width="600">
   Tu navegador no soporta la reproducción de video.
 </video>
 
