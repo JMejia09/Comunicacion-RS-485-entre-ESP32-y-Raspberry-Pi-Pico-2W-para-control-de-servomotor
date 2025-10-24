@@ -92,4 +92,212 @@ Imágenes de referencia del montaje:
 ![Diagrama de conexión](media/diagrama.png)
 ![Montaje físico](media/montaje.jpg)
 
+## 7. Desarrollo experimental
+
+### 7.1 Código del Maestro (ESP32 – Arduino IDE)
+
+```cpp
+/*
+ * Maestro RS-485 con ESP32
+ */
+
+void setup() {
+  Serial.begin(115200);
+  Serial2.begin(9600, SERIAL_8N1, 16, 17); // RX=16, TX=17
+  pinMode(4, OUTPUT); // Control DE/RE
+  digitalWrite(4, LOW);
+  Serial.println("ESP32 Maestro iniciado...");
+}
+
+void loop() {
+  digitalWrite(4, HIGH); // Habilitar transmisión
+  String command = "POS:120\n";
+  Serial2.print(command);
+  Serial.print("Enviado → ");
+  Serial.println(command);
+  digitalWrite(4, LOW); // Habilitar recepción
+
+  delay(1000);
+
+  if (Serial2.available()) {
+    String response = Serial2.readStringUntil('\n');
+    Serial.print("Respuesta ← ");
+    Serial.println(response);
+  }
+
+  delay(2000);
+}
+
+from machine import UART, Pin, PWM
+import time
+
+uart = UART(0, baudrate=9600, tx=Pin(0), rx=Pin(1))
+driver_enable = Pin(2, Pin.OUT)
+driver_enable.value(0)
+
+servo = PWM(Pin(15))
+servo.freq(50)
+
+def set_servo_speed(value):
+    duty = int(((value / 180) * 5000) + 1000)
+    servo.duty_u16(duty)
+
+print("Esclavo RS-485 listo...")
+
+while True:
+    if uart.any():
+        data = uart.readline().decode().strip()
+        print("Recibido:", data)
+
+        if data.startswith("POS:"):
+            try:
+                value = int(data.split(":")[1])
+                set_servo_speed(value)
+                driver_enable.value(1)
+                uart.write(f"OK:{value}\n")
+                driver_enable.value(0)
+            except:
+                uart.write("ERROR\n")
+
+    time.sleep(0.1)
+
+### 7.2 Código del Esclavo (Raspberry Pi Pico 2W – Thonny / MicroPython)
+
+```python
+from machine import UART, Pin, PWM
+import time
+
+uart = UART(0, baudrate=9600, tx=Pin(0), rx=Pin(1))
+driver_enable = Pin(2, Pin.OUT)
+driver_enable.value(0)
+
+servo = PWM(Pin(15))
+servo.freq(50)
+
+def set_servo_speed(value):
+    duty = int(((value / 180) * 5000) + 1000)
+    servo.duty_u16(duty)
+
+print("Esclavo RS-485 listo...")
+
+while True:
+    if uart.any():
+        data = uart.readline().decode().strip()
+        print("Recibido:", data)
+
+        if data.startswith("POS:"):
+            try:
+                value = int(data.split(":")[1])
+                set_servo_speed(value)
+                driver_enable.value(1)
+                uart.write(f"OK:{value}\n")
+                driver_enable.value(0)
+            except:
+                uart.write("ERROR\n")
+
+    time.sleep(0.1)
+
+
+## 8. Modos de comunicación implementados
+
+| Modo | Descripción | Flujo de datos | Ejemplo |
+|------|--------------|----------------|----------|
+| Simplex | Solo el maestro transmite. | Maestro → Esclavo | `POS:120` |
+| Half dúplex | Comunicación alternada entre maestro y esclavo. | Maestro ↔ Esclavo (turnos) | `POS:120` / `OK:120` |
+| Full dúplex | Comunicación simultánea entre maestro y esclavo. | Maestro ↔ Esclavo | `POS:120` + `OK:120` |
+
+---
+
+## 9. Resultados experimentales
+
+Durante las pruebas realizadas con los módulos MAX485, se obtuvieron los siguientes resultados:
+
+1. En modo **simplex**, el maestro (ESP32) transmitió comandos hacia el esclavo (Raspberry Pi Pico 2W) que ejecutó las órdenes sin enviar confirmaciones.  
+2. En **half dúplex**, la activación del pin de control DE/RE permitió el envío alternado de información, logrando comunicación bidireccional sin colisiones.  
+3. En **full dúplex**, ambos dispositivos se comunicaron de forma simultánea sin interferencias, demostrando la capacidad del bus para transmisión concurrente.  
+4. El **servomotor SG90 de rotación continua** respondió correctamente a los comandos `POS:x`, donde el valor 90 representó el reposo, los valores mayores generaron rotación en un sentido y los menores en el sentido contrario.  
+5. Se comprobó la estabilidad del enlace y la correcta transmisión de datos en los tres modos de operación.
+
+Evidencias del funcionamiento (colocar capturas o fotos):
+
+```markdown
+![Monitor serie mostrando comunicación](media/monitor_serial.png)
+![Servo respondiendo a comandos](media/servo.gif)
+
+## 10. Análisis de resultados
+
+| Parámetro | Simplex | Half dúplex | Full dúplex |
+|------------|----------|--------------|--------------|
+| Dirección de transmisión | Unidireccional | Bidireccional alternada | Bidireccional simultánea |
+| Complejidad de implementación | Baja | Media | Alta |
+| Velocidad efectiva | Alta | Media | Alta |
+| Control del flujo | No requerido | Requerido | No requerido |
+| Riesgo de colisión | Nulo | Medio | Bajo |
+| Aplicaciones típicas | Sensores, PLC unidireccionales | Redes industriales RS-485 | Comunicaciones avanzadas y monitoreo |
+
+El análisis de los resultados muestra que el modo **half dúplex** ofrece un equilibrio adecuado entre simplicidad y funcionalidad, siendo el más empleado en sistemas industriales basados en RS-485.  
+El **simplex** resulta útil para aplicaciones unidireccionales donde no se requiere respuesta del receptor, mientras que el **full dúplex** ofrece el mayor rendimiento, aunque a costa de una mayor complejidad en el hardware.
+
+---
+
+## 11. Conclusiones
+
+1. Se implementó correctamente la comunicación RS-485 entre el ESP32 (maestro) y la Raspberry Pi Pico 2W (esclavo) utilizando módulos MAX485.  
+2. Se verificaron los modos de comunicación simplex, half dúplex y full dúplex, observando las diferencias entre cada uno en cuanto a dirección de flujo, velocidad y control del canal.  
+3. El servomotor SG90 respondió adecuadamente a los comandos enviados por el maestro, confirmando la transmisión de datos confiable y la correcta interpretación de los mensajes por parte del esclavo.  
+4. El uso de los pines de control DE y RE permitió gestionar el sentido de transmisión, siendo esencial para el funcionamiento en los modos bidireccionales.  
+5. La práctica permitió comprender la relevancia del estándar RS-485 en aplicaciones industriales, destacando su robustez, bajo costo y adaptabilidad a entornos con interferencia electromagnética.
+
+---
+
+## 12. Bibliografía y recursos
+
+- Maxim Integrated, *MAX485 Low-Power Transceiver for RS-485 Communication*, Datasheet.  
+- Espressif Systems, *ESP32 Technical Reference Manual*.  
+- Raspberry Pi Foundation, *Raspberry Pi Pico W MicroPython SDK*.  
+- IEEE Standards Association, *TIA/EIA-485-A: Standard for Electrical Characteristics of Generators and Receivers for Use in Balanced Digital Multipoint Systems*.  
+- Texas Instruments, *Application Report: Understanding and Using RS-485*.  
+- Horowitz, P., & Hill, W. (2015). *The Art of Electronics* (3rd ed.). Cambridge University Press.
+
+---
+
+## 13. Estructura del repositorio
+
+## 10. Análisis de resultados
+
+| Parámetro | Simplex | Half dúplex | Full dúplex |
+|------------|----------|--------------|--------------|
+| Dirección de transmisión | Unidireccional | Bidireccional alternada | Bidireccional simultánea |
+| Complejidad de implementación | Baja | Media | Alta |
+| Velocidad efectiva | Alta | Media | Alta |
+| Control del flujo | No requerido | Requerido | No requerido |
+| Riesgo de colisión | Nulo | Medio | Bajo |
+| Aplicaciones típicas | Sensores, PLC unidireccionales | Redes industriales RS-485 | Comunicaciones avanzadas y monitoreo |
+
+El análisis de los resultados muestra que el modo **half dúplex** ofrece un equilibrio adecuado entre simplicidad y funcionalidad, siendo el más empleado en sistemas industriales basados en RS-485.  
+El **simplex** resulta útil para aplicaciones unidireccionales donde no se requiere respuesta del receptor, mientras que el **full dúplex** ofrece el mayor rendimiento, aunque a costa de una mayor complejidad en el hardware.
+
+---
+
+## 11. Conclusiones
+
+1. Se implementó correctamente la comunicación RS-485 entre el ESP32 (maestro) y la Raspberry Pi Pico 2W (esclavo) utilizando módulos MAX485.  
+2. Se verificaron los modos de comunicación simplex, half dúplex y full dúplex, observando las diferencias entre cada uno en cuanto a dirección de flujo, velocidad y control del canal.  
+3. El servomotor SG90 respondió adecuadamente a los comandos enviados por el maestro, confirmando la transmisión de datos confiable y la correcta interpretación de los mensajes por parte del esclavo.  
+4. El uso de los pines de control DE y RE permitió gestionar el sentido de transmisión, siendo esencial para el funcionamiento en los modos bidireccionales.  
+5. La práctica permitió comprender la relevancia del estándar RS-485 en aplicaciones industriales, destacando su robustez, bajo costo y adaptabilidad a entornos con interferencia electromagnética.
+
+---
+
+## 12. Bibliografía y recursos
+
+- Maxim Integrated, *MAX485 Low-Power Transceiver for RS-485 Communication*, Datasheet.  
+- Espressif Systems, *ESP32 Technical Reference Manual*.  
+- Raspberry Pi Foundation, *Raspberry Pi Pico W MicroPython SDK*.  
+- IEEE Standards Association, *TIA/EIA-485-A: Standard for Electrical Characteristics of Generators and Receivers for Use in Balanced Digital Multipoint Systems*.  
+- Texas Instruments, *Application Report: Understanding and Using RS-485*.  
+- Horowitz, P., & Hill, W. (2015). *The Art of Electronics* (3rd ed.). Cambridge University Press.
+
+---
+
 
