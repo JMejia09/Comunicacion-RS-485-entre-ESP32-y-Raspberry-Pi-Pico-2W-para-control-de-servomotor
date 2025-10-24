@@ -2,16 +2,28 @@
 
 ## 1. Información general
 
-**Asignatura:** Comunicaciones Industriales 
-**Práctica:** Implementación de comunicación RS-485 maestro–esclavo  
-**Estudiantes:**  
-- Jonny Alejandro Mejia  
-- Ferney Arturo Amaya  
-- David Esteban Diaz 
+## 1. Información general
 
-**Docente:** ING Diego Alejandro Barragan Vargas 
-**Institución:** Universidad Santo Tomas
-**Fecha:** Octubre 2025  
+**Asignatura:**  
+Comunicaciones Industriales  
+
+**Práctica:**  
+Implementación de comunicación RS-485 maestro–esclavo  
+
+**Estudiantes:**  
+- Jonny Alejandro Mejía  
+- Ferney Arturo Amaya  
+- David Esteban Díaz  
+
+**Docente:**  
+Ing. Diego Alejandro Barragán Vargas  
+
+**Institución:**  
+Universidad Santo Tomás  
+
+**Fecha:**  
+Octubre 2025  
+
 
 
 ## 2. Introducción
